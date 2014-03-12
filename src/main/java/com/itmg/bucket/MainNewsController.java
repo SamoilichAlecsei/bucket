@@ -41,11 +41,9 @@ public class MainNewsController {
     public void getMainNews(HttpServletResponse response) {
 
         CloseableHttpClient httpClient = createClient();
-        HttpGet get = new HttpGet(URL);
-        get.addHeader("x-forwarded-for", "127.0.0.1");//TODO remove hard code
 
         try {
-            List<NewsContent> contentList = httpClient.execute(get, new MainNewsResponseHandler("main_news"));
+            List<NewsContent> contentList = httpClient.execute(new HttpGet(URL), new MainNewsResponseHandler("main_news"));
             httpClient.close();
 
             PrintWriter out = getPrintWriter(response);
