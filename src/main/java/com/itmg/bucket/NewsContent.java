@@ -121,4 +121,19 @@ public class NewsContent implements Serializable {
         this.short_url = short_url;
     }
 
+
+    @Override
+    public String toString() {
+        return "NewsContent{" +
+                "news_id='" + news_id + '\'' +
+                ", news_url='" + news_url + '\'' +
+                ", img_src='" + img_src + '\'' +
+                ", img_alt='" + img_alt + '\'' +
+                ", date_updated='" + date_updated + '\'' +
+                ", news_title='" + news_title + '\'' +
+                ", news_content='" + news_content + '\'' +
+                ", parsed=" + parsed +
+                ", short_url='" + short_url + '\'' +
+                '}';
+    }
 }

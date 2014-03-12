@@ -71,6 +71,7 @@ public class MainNewsResponseHandler implements ResponseHandler<List<NewsContent
             if (!element.isParsed())
                 continue;
             element.setShort_url(element.getNews_id());
+
         }
         return parsedList;
     }
