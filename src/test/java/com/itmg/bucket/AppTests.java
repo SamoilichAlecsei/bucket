@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,7 +46,7 @@ public class AppTests {
     @Test
     public void testLoadDetails() {
         final String expectedUrl = "http://newshub.org/api/getDetailedNewsContent?accessToken=ec5e7622a39ba5a09e87fabcce102851&newsID=152687&withHtmlTags=true&offsetInMinutes=120&countryCode=ua";
-        final String actualUrl = service.buildDetailsNewsUrl("152687", "120", "ua");
+        final String actualUrl = UrlUtils.getDetailsNewsUrl("152687", "120", "ua");
         Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
 
         NewsContent expectedContent = buildDetailsNews();
@@ -86,5 +87,20 @@ public class AppTests {
         result.setParsed(true);
         result.setShort_url(null);
         return result;
+    }
+
+    @Test
+    public void testCountries() {
+        final String expectedUrl = "http://newshub.org/api/getCountriesList?accessToken=ec5e7622a39ba5a09e87fabcce102851";
+        final String actualUrl = UrlUtils.getCountriesListUrl();
+        Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
+        try {
+            List<CountryAO> countryAOs = service.loadAllCountries();
+            Assert.assertNotNull("Cannot be NULL", countryAOs);
+            Assert.assertEquals("Should be equals", 60, countryAOs.size());
+        } catch (Exception e) {
+            Assert.fail("Can't happen! e = " + e.getMessage());
+        }
+
     }
 }

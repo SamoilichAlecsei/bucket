@@ -1,26 +1,48 @@
 package com.itmg.bucket.service;
 
+import com.itmg.bucket.CountryAO;
 import com.itmg.bucket.NewsContent;
+import com.itmg.bucket.UrlUtils;
+import com.itmg.bucket.handler.CountriesResponseHandler;
 import com.itmg.bucket.handler.NewsDetailsResponseHandler;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by User on 12.03.14.
  */
 public class NewsServiceImpl implements NewsService {
 
+    private CloseableHttpClient createClient() {
+        HttpClientBuilder builder = HttpClientBuilder.create();
+        return builder.build();
+    }
 
+    public List<CountryAO> loadAllCountries() throws Exception {
+        CloseableHttpClient httpclient = createClient();
+        HttpGet get = new HttpGet(UrlUtils.getCountriesListUrl());
+
+        try {
+            List<CountryAO> myjson = httpclient.execute(get, new CountriesResponseHandler("countries"));
+            httpclient.close();
+            return myjson;
+
+        } catch (ClientProtocolException e) {
+            throw e;
+        } catch (IOException e) {
+            throw e;
+        }
+    }
     @Override
     public NewsContent loadDetailsContent(String newsID, String countryCode, String remoteIp, String offsetInMinutes)  throws Exception {
-        HttpClientBuilder builder = HttpClientBuilder.create();
-        CloseableHttpClient httpclient = builder.build();
-        final String url = buildDetailsNewsUrl(newsID, offsetInMinutes, countryCode);
-        HttpGet get = new HttpGet(url);
+        CloseableHttpClient httpclient = createClient();
+        HttpGet get = new HttpGet(UrlUtils.getDetailsNewsUrl(newsID, offsetInMinutes, countryCode));
 
         try {
             NewsContent myjson = httpclient.execute(get, new NewsDetailsResponseHandler());
@@ -31,11 +53,5 @@ public class NewsServiceImpl implements NewsService {
         } catch (IOException e) {
             throw e;
         }
-    }
-
-    @Override
-    public String buildDetailsNewsUrl(String newsId, String offsetInMinutes, String countryCode) {
-        return String.format("%s%s%s%s&newsID=%s&withHtmlTags=%s&offsetInMinutes=%s&countryCode=%s", "http://newshub.org", "/api",
-                "/getDetailedNewsContent?", "accessToken=ec5e7622a39ba5a09e87fabcce102851", newsId, "true", offsetInMinutes, countryCode);
     }
 }

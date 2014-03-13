@@ -22,21 +22,12 @@ import java.nio.charset.Charset;
 /**
  * Created by User on 12.03.14.
  */
-public class NewsDetailsResponseHandler implements ResponseHandler<NewsContent> {
+public class NewsDetailsResponseHandler extends BaseResponseHandler implements ResponseHandler<NewsContent> {
 
     @Override
     public NewsContent handleResponse(final HttpResponse response) throws IOException {
-
-        StatusLine statusLine = response.getStatusLine();
-        HttpEntity entity = response.getEntity();
-
-        if (statusLine.getStatusCode() >= HttpStatus.SC_MULTIPLE_CHOICES)
-            throw new HttpResponseException(statusLine.getStatusCode(),statusLine.getReasonPhrase());
-        if (entity == null)
-            throw new ClientProtocolException("Response contains no content");
-
+        verifyResponse(response);
         Reader reader = initReaderFromResponse(response);
-
         try {
             Gson gson = new GsonBuilder().create();
             JsonParser parser = new JsonParser();
@@ -45,20 +36,5 @@ public class NewsDetailsResponseHandler implements ResponseHandler<NewsContent> 
         } catch (Exception ex) {
             throw new IOException(ex);
         }
-    }
-
-    /**
-     * Init {@link Reader} object.
-     *
-     * @param response {@link HttpResponse}
-     * @return {@link Reader}
-     * @throws IllegalStateException on errors
-     * @throws IOException           on errors
-     */
-    private Reader initReaderFromResponse(HttpResponse response) throws IllegalStateException, IOException {
-        HttpEntity entity = response.getEntity();
-        ContentType contentType = ContentType.getOrDefault(entity);
-        Charset charset = contentType.getCharset();
-        return new InputStreamReader(entity.getContent(), charset);
     }
 }
