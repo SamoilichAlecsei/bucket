@@ -57,7 +57,15 @@ public class AppTests {
     }
 
     @Test
-    public void simple() throws Exception {
+    public void testMainController() throws Exception {
+        ResultActions actions = mockMvc.perform(get("/main"))
+                .andExpect(status().isOk());
+        MvcResult result = actions.andReturn();
+        Assert.assertEquals("Should be equals" , "hello", result.getModelAndView().getViewName());
+    }
+
+    @Test
+    public void testNewsController() throws Exception {
         ResultActions actions = mockMvc.perform(get("/getMainNews"))
                 .andExpect(status().isOk());
         MvcResult result = actions.andReturn();
