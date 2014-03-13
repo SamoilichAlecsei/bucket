@@ -1,5 +1,6 @@
 package com.itmg.bucket;
 
+import com.itmg.bucket.response.*;
 import com.itmg.bucket.service.NewsService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -102,5 +104,137 @@ public class AppTests {
             Assert.fail("Can't happen! e = " + e.getMessage());
         }
 
+    }
+
+    @Test
+    public void testMenuItems() {
+        final String expectedUrl = "http://newshub.org/api/getMenuItems?accessToken=ec5e7622a39ba5a09e87fabcce102851&countryCode=ua";
+        final String actualUrl = UrlUtils.getMenuItemsUrl("ua");
+        Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
+        try {
+            List<MenuItemAO> menuItemAOs = service.listMenuItems("ua");
+            Assert.assertNotNull("Cannot be NULL", menuItemAOs);
+            Assert.assertEquals("Should be equals", 5, menuItemAOs.size());
+        } catch (Exception e) {
+            Assert.fail("Can't happen! e = " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSliderNews() {
+        final String expectedUrl = "http://newshub.org/api/getSliderNews?accessToken=ec5e7622a39ba5a09e87fabcce102851&countryCode=ua";
+        final String actualUrl = UrlUtils.getSliderNewsUrl("ua");
+        Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
+        try {
+            List<NewsContent> newsContents = service.listSliderNews("ua");
+            Assert.assertNotNull("Cannot be NULL", newsContents);
+            Assert.assertEquals("Should be equals", 5, newsContents.size());
+        } catch (Exception e) {
+            Assert.fail("Can't happen! e = " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testLoadCategoriesByCountry() {
+        final String expectedUrl = "http://newshub.org/api/getReferencedCategoriesList?accessToken=ec5e7622a39ba5a09e87fabcce102851&countryCode=ua";
+        final String actualUrl = UrlUtils.getCategoriesByCountryUrl("ua");
+        Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
+        try {
+            List<CategoryAO> categoryAOs = service.loadCategoriesByCountry("ua");
+            Assert.assertNotNull("Cannot be NULL", categoryAOs);
+            Assert.assertEquals("Should be equals", 3, categoryAOs.size());
+        } catch (Exception e) {
+            Assert.fail("Can't happen! e = " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testLoadNewsByMenuSectionAndCountry() {
+        final String expectedUrl = "http://newshub.org/api/listNewsByMenuItem?accessToken=ec5e7622a39ba5a09e87fabcce102851&countryCode=ua&fullContent=content&menuItem=menuName&pageID=123&offsetInMinutes=120";
+        final String actualUrl = UrlUtils.getMenuNewsUrl("menuName", "ua", "content", "123", "120");
+        Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
+        try {
+            List<NewsContent> newsContents = service.loadNewsByMenuSectionAndCountry("news", "ua", "1", "NO", "120");
+            Assert.assertNotNull("Cannot be NULL", newsContents);
+            Assert.assertEquals("Should be equals", 10, newsContents.size());
+        } catch (Exception e) {
+            Assert.fail("Can't happen! e = " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testWeatherData() {
+        final String expectedUrl = "http://ua.newshub.org/weather/data";
+        final String actualUrl = UrlUtils.getWeatherUrl();
+        Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
+        try {
+            WeatherData weatherData = service.loadWeatherData();//TODO!!!!!!!!!!! need check url. because empty result every time
+            Assert.assertNotNull("Cannot be NULL", weatherData);
+//            Assert.assertEquals("Should be equals", 10, weatherData.size());
+        } catch (Exception e) {
+            Assert.fail("Can't happen! e = " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testFetchUsersLocale() {
+        try {
+            String code = service.fetchUsersLocale("127.0.0.1");
+            Assert.assertEquals("Should be equals", "ua", code);
+        } catch (Exception e) {
+            Assert.fail("Can't happen! e = " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSearchNewsBy() {
+        final String expectedUrl = "http://newshub.org/api/searchNewsBy?accessToken=ec5e7622a39ba5a09e87fabcce102851&searchParam=searchParam&countryCode=ua&categoryCode=news&pageId=1&offsetInMinutes=120";
+        final String actualUrl = UrlUtils.getSearchNewsLink("searchParam", "ua", "news", "1", "120");
+        Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
+        try {
+            SearchResultAO searchResultAO = service.searchNewsBy("", "ua", "news", "152687", "120");//TODO need valid request parameters
+            Assert.assertNotNull("Cannot be NULL", searchResultAO);
+//            Assert.assertEquals("Should be equals", 10, searchResultAO.size());
+        } catch (Exception e) {
+            Assert.fail("Can't happen! e = " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testTopNews() {
+        final String expectedUrl = "http://newshub.org/api/getTopNews?accessToken=ec5e7622a39ba5a09e87fabcce102851&countryCode=ua&offsetInMinutes=120";
+        final String actualUrl = UrlUtils.getTopNewsLink("ua", "120");
+        Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
+        try {
+            NewsContent newsContent = service.getTopNews("ua", "120");
+            Assert.assertNotNull("Cannot be NULL", newsContent);
+        } catch (Exception e) {
+            Assert.fail("Can't happen! e = " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testLoadCountryBundle() {
+        final String expectedUrl = "http://newshub.org/api/searchNewsBy?accessToken=ec5e7622a39ba5a09e87fabcce102851&searchParam=searchParam&countryCode=ua&categoryCode=news&pageId=1&offsetInMinutes=120";
+        final String actualUrl = UrlUtils.getLocalizationBundleLink("ua");
+        Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
+        try {
+            SearchResultAO searchResultAO = service.searchNewsBy("", "ua", "news", "152687", "120");//TODO need valid request parameters
+            Assert.assertNotNull("Cannot be NULL", searchResultAO);
+//            Assert.assertEquals("Should be equals", 10, searchResultAO.size());
+        } catch (Exception e) {
+            Assert.fail("Can't happen! e = " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testFulContentForNews() {
+        try {
+            List<NewsContent> contentForNews = service.getFulContentForNews(Arrays.asList("1", "2", "3"), "120", "ua");
+            Assert.assertNotNull("Cannot be NULL", contentForNews);
+            Assert.assertEquals("Should be equals", 3, contentForNews.size());
+        } catch (Exception e) {
+            Assert.fail("Can't happen! e = " + e.getMessage());
+        }
     }
 }

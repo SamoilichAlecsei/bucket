@@ -1,4 +1,4 @@
-package com.itmg.bucket;
+package com.itmg.bucket.response;
 
 import java.io.Serializable;
 

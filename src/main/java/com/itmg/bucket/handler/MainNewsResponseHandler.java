@@ -1,7 +1,8 @@
-package com.itmg.bucket;
+package com.itmg.bucket.handler;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.itmg.bucket.response.NewsContent;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
