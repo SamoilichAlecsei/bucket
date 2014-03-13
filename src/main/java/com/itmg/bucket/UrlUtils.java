@@ -38,6 +38,12 @@ public final class UrlUtils {
                 "/listNewsByMenuItem?", "accessToken=ec5e7622a39ba5a09e87fabcce102851", countryCode, fullContent, menuName, pageId, offsetInMinutes);
     }
 
+    public static String getFreshNewsUrl(String accessToken, String countryCode, String menuItem, String lastNewsTimestamp,
+                                         String fullContent, String offsetInMinutes){
+        return String.format("%s%s%s?accessToken=%s&countryCode=%s&fullContent=%s&menuItem=%s&lastNewsTimestamp=%s&offsetInMinutes=%s", "http://newshub.org", "/api",
+                "/getFreshNews", accessToken, countryCode, fullContent, menuItem, lastNewsTimestamp, offsetInMinutes);
+    }
+
     public static String getSearchNewsLink(String searchParam, String countryCode, String categoryCode, String pageId, String offsetInMinutes) {
         return String.format("%s%s%s%s&searchParam=%s&countryCode=%s&categoryCode=%s&pageId=%s&offsetInMinutes=%s", "http://newshub.org", "/api",
                 "/searchNewsBy?", "accessToken=ec5e7622a39ba5a09e87fabcce102851", searchParam, countryCode, categoryCode == null ? "all" : categoryCode, pageId, offsetInMinutes);

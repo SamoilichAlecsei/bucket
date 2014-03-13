@@ -146,6 +146,24 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public List<NewsContent> getFreshNews(String accessToken, String countryCode, String menuItem, String lastNewsTimestamp,
+                                          String fullContent, String offsetInMinutes) throws Exception {
+        CloseableHttpClient httpclient = createClient();
+        HttpGet get = new HttpGet(UrlUtils.getFreshNewsUrl(accessToken, countryCode, menuItem, lastNewsTimestamp, fullContent, offsetInMinutes));
+
+        try {
+            List<NewsContent> myjson = httpclient.execute(get, new NewsResponseHandler("menu_news"));
+            httpclient.close();
+            return myjson;
+        } catch (ClientProtocolException e) {
+            throw e;
+        } catch (IOException e) {
+            throw e;
+        }
+
+    }
+
+    @Override
     public WeatherData loadWeatherData() throws Exception {
         CloseableHttpClient httpClient = createClient();
         HttpGet get = new HttpGet(UrlUtils.getWeatherUrl());

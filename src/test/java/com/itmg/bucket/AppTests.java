@@ -3,6 +3,7 @@ package com.itmg.bucket;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.itmg.bucket.localization.LocalizationBundle;
 import com.itmg.bucket.response.*;
 import com.itmg.bucket.service.NewsService;
 import org.apache.http.HttpEntity;
@@ -31,6 +32,7 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -61,7 +63,7 @@ public class AppTests {
         ResultActions actions = mockMvc.perform(get("/main"))
                 .andExpect(status().isOk());
         MvcResult result = actions.andReturn();
-        Assert.assertEquals("Should be equals" , "hello", result.getModelAndView().getViewName());
+        Assert.assertEquals("Should be equals", "hello", result.getModelAndView().getViewName());
     }
 
     @Test
@@ -133,7 +135,6 @@ public class AppTests {
         } catch (Exception e) {
             Assert.fail("Can't happen! e = " + e.getMessage());
         }
-
     }
 
     @Test
@@ -200,7 +201,6 @@ public class AppTests {
         try {
             WeatherData weatherData = service.loadWeatherData();//TODO!!!!!!!!!!! need check url. because empty result every time
             Assert.assertNotNull("Cannot be NULL", weatherData);
-//            Assert.assertEquals("Should be equals", 10, weatherData.size());
         } catch (Exception e) {
             Assert.fail("Can't happen! e = " + e.getMessage());
         }
@@ -222,9 +222,11 @@ public class AppTests {
         final String actualUrl = UrlUtils.getSearchNewsLink("searchParam", "ua", "news", "1", "120");
         Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
         try {
-            SearchResultAO searchResultAO = service.searchNewsBy("", "ua", "news", "152687", "120");//TODO need valid request parameters
+            SearchResultAO searchResultAO = service.searchNewsBy("Яценюк", "ua", "all", "1", "120");
             Assert.assertNotNull("Cannot be NULL", searchResultAO);
-//            Assert.assertEquals("Should be equals", 10, searchResultAO.size());
+            Assert.assertEquals("Should be equals", "all", searchResultAO.getCategory());
+            Assert.assertEquals("Should be equals", "ua", searchResultAO.getCountry());
+            Assert.assertEquals("Should be equals", "1", searchResultAO.getPageId());
         } catch (Exception e) {
             Assert.fail("Can't happen! e = " + e.getMessage());
         }
@@ -249,9 +251,10 @@ public class AppTests {
         final String actualUrl = UrlUtils.getLocalizationBundleLink("ua");
         Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
         try {
-            SearchResultAO searchResultAO = service.searchNewsBy("", "ua", "news", "152687", "120");//TODO need valid request parameters
-            Assert.assertNotNull("Cannot be NULL", searchResultAO);
-//            Assert.assertEquals("Should be equals", 10, searchResultAO.size());
+            LocalizationBundle bundle = service.loadCountryBundle("ua");
+            Assert.assertNotNull("Cannot be NULL", bundle);
+            Assert.assertEquals("Should be equals", "ua", bundle.getCountry());
+            Assert.assertEquals("Should be equals", 64, bundle.getBundle().size());
         } catch (Exception e) {
             Assert.fail("Can't happen! e = " + e.getMessage());
         }
@@ -267,4 +270,18 @@ public class AppTests {
             Assert.fail("Can't happen! e = " + e.getMessage());
         }
     }
+
+//    @Test
+//    public void testFreshNews() {
+//        final String expectedUrl = "http://newshub.org/api/getFreshNews?accessToken=ec5e7622a39ba5a09e87fabcce102851&countryCode=ua&fullContent=NO&menuItem=menuItem&lastNewsTimestamp=lastNewsTimestamp&offsetInMinutes=120";
+//        final String actualUrl = UrlUtils.getFreshNewsUrl("ec5e7622a39ba5a09e87fabcce102851", "ua", "menuItem", "lastNewsTimestamp", "NO", "120");
+//        Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
+//        try {
+//            List<NewsContent> freshNews = service.getFreshNews("ec5e7622a39ba5a09e87fabcce102851", "ua", "news", "" + (System.currentTimeMillis() - 1000 * 60 * 60 * 5), "NO", "120");
+//            Assert.assertNotNull("Cannot be NULL", freshNews);
+//            Assert.assertEquals("Should be equals", 60, freshNews.size());
+//        } catch (Exception e) {
+//            Assert.fail("Can't happen! e = " + e.getMessage());
+//        }
+//    }
 }

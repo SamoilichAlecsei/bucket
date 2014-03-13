@@ -24,6 +24,9 @@ public interface NewsService {
                                                       String pageId, String fullContent, String offsetInMinutes)
             throws Exception;
 
+    List<NewsContent> getFreshNews(String accessToken, String countryCode, String menuItem, String lastNewsTimestamp,
+                                   String fullContent, String offsetInMinutes) throws Exception;
+
     WeatherData loadWeatherData() throws Exception;
 
     String fetchUsersLocale(String usersIp) throws Exception;
