@@ -1,7 +1,16 @@
 package com.itmg.bucket;
 
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import com.itmg.bucket.response.*;
 import com.itmg.bucket.service.NewsService;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.entity.ContentType;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,11 +20,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,8 +58,13 @@ public class AppTests {
 
     @Test
     public void simple() throws Exception {
-        mockMvc.perform(get("/getMainNews"))
+        ResultActions actions = mockMvc.perform(get("/getMainNews"))
                 .andExpect(status().isOk());
+        MvcResult result = actions.andReturn();
+        String content = result.getResponse().getContentAsString();
+
+        Document doc = Jsoup.parse(content);
+        Assert.assertEquals("Should be equals", 74, doc.getAllElements().size());
     }
 
     @Test
@@ -215,7 +237,7 @@ public class AppTests {
 
     @Test
     public void testLoadCountryBundle() {
-        final String expectedUrl = "http://newshub.org/api/searchNewsBy?accessToken=ec5e7622a39ba5a09e87fabcce102851&searchParam=searchParam&countryCode=ua&categoryCode=news&pageId=1&offsetInMinutes=120";
+        final String expectedUrl = "http://newshub.org/api/getLocalizationBundleByCountry?accessToken=ec5e7622a39ba5a09e87fabcce102851&countryCode=ua";
         final String actualUrl = UrlUtils.getLocalizationBundleLink("ua");
         Assert.assertEquals("Should be equals", expectedUrl, actualUrl);
         try {

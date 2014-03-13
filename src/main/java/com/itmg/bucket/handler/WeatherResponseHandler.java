@@ -28,7 +28,6 @@ public class WeatherResponseHandler extends BaseResponseHandler implements Respo
             Document doc = Jsoup.parse(html);
 
             for (Element el : doc.getAllElements()) {
-                System.out.println(el.className() + "  " + el.attr("src") + "  " + el.text());
                 WeatherClassNames classNames = WeatherClassNames.getByValue(el.className());
                 switch (classNames) {
                     case WEATHER_IMG:

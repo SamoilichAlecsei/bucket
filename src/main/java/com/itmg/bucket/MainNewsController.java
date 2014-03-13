@@ -25,11 +25,6 @@ import java.util.List;
 @RequestMapping("/getMainNews")
 public class MainNewsController {
     /**
-     * Url by which getting news.
-     */
-    //TODO maybe move to config file
-    private static final String URL = "http://newshub.org/api/getMainPageNews?accessToken=ec5e7622a39ba5a09e87fabcce102851&countryCode=ua&pageID=1&fullContent=NO&offsetInMinutes=120";
-    /**
      * Content type.
      */
     private static final String CONTENT_TYPE = "text/html";
@@ -44,7 +39,7 @@ public class MainNewsController {
         CloseableHttpClient httpClient = createClient();
 
         try {
-            List<NewsContent> contentList = httpClient.execute(new HttpGet(URL), new MainNewsResponseHandler("main_news"));
+            List<NewsContent> contentList = httpClient.execute(new HttpGet(UrlUtils.getMainNewsUrl("ua", "1", "NO", "120")), new MainNewsResponseHandler("main_news"));
             httpClient.close();
 
             PrintWriter out = getPrintWriter(response);
